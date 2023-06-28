@@ -2,7 +2,7 @@ import os.path
 import sys
 
 import bs4
-import requests
+import cloudscraper as cloudscraper
 from easygui import buttonbox, enterbox, msgbox, fileopenbox
 import re
 
@@ -51,11 +51,14 @@ if output_format == "txt (choose separators)":
 
 
 # --- get requests --- #
-res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+scraper = cloudscraper.create_scraper(delay=10, browser="chrome")
+content = scraper.get(url)
 
-soup = bs4.BeautifulSoup(res.text, 'html.parser')
+soup = bs4.BeautifulSoup(content.text, 'html.parser')
 word_html = soup.find_all('a', class_='SetPageTerm-wordText')
 definition_html = soup.find_all('a', class_='SetPageTerm-definitionText')
+
+print(soup)
 
 word = [word.contents[0].text for word in word_html]
 definition = [word.contents[0].text for word in definition_html]
