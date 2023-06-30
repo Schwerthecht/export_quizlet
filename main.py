@@ -1,3 +1,4 @@
+import json
 import os.path
 import sys
 
@@ -55,15 +56,14 @@ scraper = cloudscraper.create_scraper(delay=10, browser="chrome")
 content = scraper.get(url)
 
 soup = bs4.BeautifulSoup(content.text, 'html.parser')
-word_html = soup.find_all('a', class_='SetPageTerm-wordText')
-definition_html = soup.find_all('a', class_='SetPageTerm-definitionText')
+outer_json = soup.find('script', {"id": "__NEXT_DATA__"}).text
+inner_json = json.loads(json.loads(outer_json)["props"]["pageProps"]["dehydratedReduxStateKey"])["setPage"]["termIdToTermsMap"]
 
-print(soup)
+words = [value['word'] for key, value in inner_json.items()]
+definitions = [value['definition'] for key, value in inner_json.items()]
 
-word = [word.contents[0].text for word in word_html]
-definition = [word.contents[0].text for word in definition_html]
 
-dictionary = dict(zip(word, definition))
+dictionary = dict(zip(words, definitions))
 
 # --- write to file --- #
 with open(file, "w", encoding="utf-8") as f:
