@@ -1,4 +1,8 @@
 # export_quizlet
+
+**This repository is no further maintained!!!**
+
+
 export Quizlet set without Quizlet Plus - with GUI
 
 ## NOTE:
